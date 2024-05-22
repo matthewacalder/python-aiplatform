@@ -13,9 +13,11 @@
 # limitations under the License.
 
 from unittest.mock import MagicMock, patch
+# from vertexai.resources.preview import FeatureOnlineStore
 
 from google.cloud import aiplatform
 import pytest
+import vertexai
 
 
 @pytest.fixture
@@ -689,6 +691,29 @@ def mock_write_feature_values(mock_entity_type):
         mock_entity_type, "write_feature_values"
     ) as mock_write_feature_values:
         yield mock_write_feature_values
+
+
+@pytest.fixture
+def mock_feature_online_store():
+    mock = MagicMock(vertexai.resources.preview.FeatureOnlineStore)
+    yield mock
+
+
+@pytest.fixture
+def mock_create_feature_online_store(mock_feature_online_store):
+    with patch.object(
+        vertexai.resources.preview.FeatureOnlineStore, "create_bigtable_store"
+    ) as mock_create_feature_online_store:
+        mock_create_feature_online_store.return_value = mock_feature_online_store
+        yield mock_create_feature_online_store
+
+@pytest.fixture
+def mock_create_optimized_public_online_store(mock_feature_online_store):
+    with patch.object(
+        vertexai.resources.preview.FeatureOnlineStore, "create_optimized_store"
+    ) as mock_create_optimized_store:
+        mock_create_optimized_store.return_value = mock_feature_online_store
+        yield mock_create_optimized_store
 
 
 """
