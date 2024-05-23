@@ -13,6 +13,7 @@ from tensorboard.plugins.hparams import metadata as hparams_metadata
 from tensorboard.plugins.image import metadata as images_metadata
 from tensorboard.plugins.scalar import metadata as scalar_metadata
 from tensorboard.plugins.text import metadata as text_metadata
+from tensorboard_plugin_profile import profile_plugin
 
 ALLOWED_PLUGINS = [
     scalar_metadata.PLUGIN_NAME,
@@ -22,6 +23,7 @@ ALLOWED_PLUGINS = [
     hparams_metadata.PLUGIN_NAME,
     images_metadata.PLUGIN_NAME,
     graphs_metadata.PLUGIN_NAME,
+    profile_plugin.PLUGIN_NAME,
 ]
 
 # Minimum length of a logdir polling cycle in seconds. Shorter cycles will

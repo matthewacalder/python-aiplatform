@@ -255,12 +255,20 @@ def _create_uploader(
         max_blob_size=max_blob_size,
     )
 
+    plugins = uploader_constants.ALLOWED_PLUGINS
+    if allowed_plugins:
+        plugins += [
+            plugin
+            for plugin in allowed_plugins
+            if plugin not in uploader_constants.ALLOWED_PLUGINS
+        ]
+
     return uploader_lib.TensorBoardUploader(
         experiment_name=experiment_name,
         tensorboard_resource_name=tensorboard_resource_name,
         writer_client=writer_client,
         logdir=logdir,
-        allowed_plugins=allowed_plugins,
+        allowed_plugins=plugins,
         upload_limits=upload_limits,
         blob_storage_bucket=blob_storage_bucket,
         blob_storage_folder=blob_storage_folder,
@@ -1239,7 +1247,7 @@ class TensorboardUploaderTest(tf.test.TestCase, parameterized.TestCase):
     )
     @patch.object(metadata, "_experiment_tracker", autospec=True)
     @patch.object(experiment_resources, "Experiment", autospec=True)
-    def test_add_profile_plugin(
+    def test_profile_plugin_included_by_default(
         self, experiment_resources_mock, experiment_tracker_mock, run_resource_mock
     ):
         experiment_resources_mock.get.return_value = _TEST_EXPERIMENT_NAME
@@ -1259,7 +1267,6 @@ class TensorboardUploaderTest(tf.test.TestCase, parameterized.TestCase):
                 _create_mock_client(),
                 logdir,
                 one_shot=True,
-                allowed_plugins=frozenset(("profile",)),
                 run_name_prefix=run_name,
             )
 
